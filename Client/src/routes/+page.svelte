@@ -2,6 +2,7 @@
         // import from the store
         import {products, categories, getAllProducts} from '../stores/productStore.js';
 
+    
          // filtered is subscribed to the $products store
           // initially filtered is a copy of products (from the store)
           $: filtered = $products;
@@ -20,26 +21,143 @@
             filtered = $products.filter(p=> {return p.category_id == cat_id});
           }
         }
+//  SEARCH FUNCTON
+
+//  I MODIFIED THIS FUNCTION IS FROM W3SCHOOLS.COM 
+//  https://www.w3schools.com/howto/howto_js_filter_lists.asp
 
 
-        // // @ts-ignore
-        // const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+    function SearchProduct(){
+    
+    let input, filter, table, rows, rowText, i, txtValue;
 
-        // // @ts-ignore
-        // const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
-        //     v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
-        //     )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+    table = document.getElementById("myTable");
+    // @ts-ignore
+    rows = table.rows;
+    input = document.getElementById("myInput");
+    // @ts-ignore
+    filter = input.value.toUpperCase();
 
-        // // do the work...
-        // document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
-        //     const table = th.closest('table');
-        //     // @ts-ignore
-        //     Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
-        //         // @ts-ignore
-        //         .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
-        //         // @ts-ignore
-        //         .forEach(tr => table.appendChild(tr) );
-        // })));
+
+
+    for (i = 1; i < rows.length - 1; i++) {
+
+      rowText = rows[i].getElementsByTagName('TD')[1];
+
+        txtValue = rowText.innerHTML;
+
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+
+            rows[i].style.display = "";
+
+        } else {
+
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+
+  /**
+  I MODIFIED THIS FUNCTION IS FROM W3SCHOOLS.COM 
+  https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_sort_table 
+
+	*/
+ function sortTable(n=0) {
+ let table, rows, switching, i, x, y, yText, xText, shouldSwitch, dir, switchcount = 0;
+
+  table = document.getElementById("myTable");
+
+  switching = true;
+
+  //Set the sorting direction to ascending:
+  dir = "asc";
+
+  /* Make a loop that will continue until no switching has been done:*/
+  while (switching) {
+
+    //start by saying: no switching is done:
+    switching = false;
+
+    // @ts-ignore
+    rows = table.rows;
+
+    /*Loop through all table rows (except the first, which contains table headers):*/
+    for (i = 1; i < rows.length - 1; i++) {
+
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+
+      /*Get the two elements you want to compare, one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[n];
+
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+
+
+      // I MOFIFIED THIS CODE FROM STACKOVERLOW
+      // https://stackoverflow.com/questions/48795284/javascript-column-sort-for-currency-on-html-table
+
+      if (n == 1 || n == 2) {
+        xText = x.innerHTML.toLowerCase();
+        yText = y.innerHTML.toLowerCase();
+      } 
+      else if (n == 3) {
+        xText = Number(x.innerHTML);
+        yText = Number(y.innerHTML);
+      }
+      else {
+        xText = parseFloat(x.innerHTML.split('€')[1].replace(/,/g, ''));
+        yText = parseFloat(y.innerHTML.split('€')[1].replace(/,/g, ''));
+      }
+
+      /*check if the two rows should switch place, based on the direction, asc or desc:*/
+      if (dir == "asc") {
+
+        if ( xText > yText) {
+
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+
+          break;
+        }
+      } else if (dir == "desc") {
+
+        if ( xText < yText) {
+
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+
+      /*If a switch has been marked, make the switch and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+
+      switching = true;
+
+      //Each time a switch is done, increase this count by 1:
+      switchcount++;
+
+    } else {
+
+      /*If no switching has been done AND the direction is "asc", set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+
+        dir = "desc";
+        
+        switching = true;
+      }
+    }
+  }
+}
+
+
+
+
+
 
        
 </script>
@@ -49,7 +167,23 @@
       <div class="row">
         <!-- Page Header -->
         <h2 class="mt-5">Products from API</h2>
+
+        <input type="text" id="myInput" on:keyup={()=> SearchProduct()} placeholder="Search for names.." title="Type in a name">
       </div>
+
+      <section class="search">
+        <h1 class="title">Full-Text Search</h1>
+       <form action="#">
+         <input
+           type="search"
+           name="search"
+           id="search"
+           placeholder="Enter search..."
+         />
+         <button type="submit">Search</button>
+       </form>
+       <ul class="products"></ul>
+      </section>
       <div class="row">
         <div class="col-sm-2">
           <!-- Page Body Left Column (menu) -->
@@ -72,14 +206,14 @@
         <div class="col-sm-10">
           <!-- Page Body Right Side (Content goes here) -->
           <div id="products">
-            <table class="table table-striped table-bordered table-hover">
+            <table id="myTable" class="table table-striped table-bordered table-hover">
               <thead>
                 <tr>
                   <th>id</th>
-                  <th>name</th>
-                  <th>description</th>
-                  <th>stock</th>
-                  <th>price</th>
+                  <th on:click={()=> sortTable(1)}>name</th>
+                  <th on:click={()=> sortTable(2)}>description</th>
+                  <th on:click={()=> sortTable(3)}>stock</th>
+                  <th on:click={()=> sortTable(4)}>price</th>
                 </tr>
                 
               </thead>

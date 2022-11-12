@@ -58,8 +58,11 @@ async function getProductById(id) {
 }
 
 
+
+
+
 // Export 
 module.exports = {
     getProducts,
-    getProductById
+    getProductById,
 };

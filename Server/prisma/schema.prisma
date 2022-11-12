@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -42,3 +43,6 @@ model product {
   // onDelete and onUpdate define what happens if the category a product belongs to is updated or deleted.
   category            category? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+
+

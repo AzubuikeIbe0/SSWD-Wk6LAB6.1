@@ -46,6 +46,19 @@ app.use('/product', require('./controllers/productController'));
 // Route to category controller
 app.use('/category', require('./controllers/categoryController'));
 
+
+
+app.use('/product/search', async (req, res) => {
+    const searchProduct = await prisma.product.findMany({
+      where: {
+        body: {
+          search: req.query.q, // get search term from the query string q
+        },
+      },
+    });
+    res.json(product);
+});
+
 // Globally catch 404 and forward to error handler
 app.use(function (req, res, next) {
     let err = new Error('Not Found: '+ req.method + ":" + req.originalUrl);
