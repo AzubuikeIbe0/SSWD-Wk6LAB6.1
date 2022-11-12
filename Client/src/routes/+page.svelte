@@ -22,6 +22,37 @@
           }
         }
 //  SEARCH FUNCTON
+//  I MODIFIED THIS FUNCTION IS FROM W3SCHOOLS.COM 
+//  https://www.w3schools.com/howto/howto_js_filter_lists.asp
+function SearchInput(){
+    
+    let input, filter, table, rows, rowText, i, txtValue;
+
+    table = document.getElementById("myTable");
+    // @ts-ignore
+    rows = table.rows;
+    input = document.getElementById("search");
+    // @ts-ignore
+    filter = input.value.toUpperCase();
+
+
+
+    for (i = 1; i < rows.length - 1; i++) {
+
+      rowText = rows[i].getElementsByTagName('TD')[1];
+
+        txtValue = rowText.innerHTML;
+
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+
+            rows[i].style.display = "";
+
+        } else {
+
+            rows[i].style.display = "none";
+        }
+    }
+}
 
 //  I MODIFIED THIS FUNCTION IS FROM W3SCHOOLS.COM 
 //  https://www.w3schools.com/howto/howto_js_filter_lists.asp
@@ -172,7 +203,7 @@
       </div>
 
       <section class="search">
-        <h1 class="title">Full-Text Search</h1>
+        <h1 class="title">Using Search Words</h1>
        <form action="#">
          <input
            type="search"
@@ -180,7 +211,7 @@
            id="search"
            placeholder="Enter search..."
          />
-         <button type="submit">Search</button>
+         <button on:click={()=> SearchInput()} type="submit">Search</button>
        </form>
        <ul class="products"></ul>
       </section>
